@@ -19,6 +19,14 @@
     "imageUrl": "https://raw.githubusercontent.com/danielveigasilva/jellyfin-plugin-letterboxd-sync/master/images/letterboxd-sync.png",
     "versions": [
       {
+        "version": "1.1.9.0",
+        "changelog": "- add configurable User-Agent to prevent 403 errors in Letterboxd API requests (958975e)\n- add configurable User-Agent option (17a2786)",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/kbnchk/jellyfin-plugin-letterboxd-sync/releases/download/v1.1.9/jellyfin-plugin-letterboxd-sync-v1.1.9.zip",
+        "checksum": "6f72256080b9c8f2b8212c34b45aee70",
+        "timestamp": "2026-01-31T20:06:51Z"
+      },
+      {
         "version": "1.1.8.0",
         "changelog": "- update: add ability to restrict lookback on film updates to avoid letterboxd load (005c655)",
         "targetAbi": "10.11.0.0",

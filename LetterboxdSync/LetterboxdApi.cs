@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
+using System;
+
 namespace LetterboxdSync;
 
 public class LetterboxdApi
@@ -18,6 +20,15 @@ public class LetterboxdApi
     private string csrf = string.Empty;
 
     private string username = string.Empty;
+    
+    private readonly string userAgent;
+    
+    public LetterboxdApi()
+    {
+        // Получаем User-Agent из конфигурации плагина, если доступна, иначе используем значение по умолчанию
+        userAgent = Plugin.Instance?.Configuration.UserAgent ?? 
+                   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+    }
 
     public string Csrf => csrf;
 
@@ -30,6 +41,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient(new HttpClientHandler { CookieContainer = cookieContainer }))
         {
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             var response = await client.PostAsync(url, new FormUrlEncodedContent(new Dictionary<string, string> { })).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new Exception($"Letterbox return {(int)response.StatusCode}");
@@ -41,6 +53,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient(new HttpClientHandler { CookieContainer = cookieContainer }))
         {
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             client.DefaultRequestHeaders.Add("DNT", "1");
             client.DefaultRequestHeaders.Add("Host", "letterboxd.com");
             client.DefaultRequestHeaders.Add("Origin", "https://letterboxd.com");
@@ -89,6 +102,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient(handler))
         {
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             var res = await client.GetAsync(tmdbUrl).ConfigureAwait(false);
 
             string letterboxdUrl = res?.RequestMessage?.RequestUri?.ToString() ?? string.Empty;
@@ -131,6 +145,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient())
         {
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             client.DefaultRequestHeaders.Add("Cookie", this.cookie);
 
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -165,6 +180,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient())
         {
+            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             client.DefaultRequestHeaders.Add("Cookie", this.cookie);
 
             var response = await client.GetStringAsync(url).ConfigureAwait(false);

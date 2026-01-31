@@ -27,6 +27,7 @@ export default function (view, params) {
                 view.querySelector('#sendfavorite').checked = configUserFilter[0].SendFavorite;
                 view.querySelector('#enabledatefilter').checked = configUserFilter[0].EnableDateFilter || false;
                 view.querySelector('#datefilterdays').value = configUserFilter[0].DateFilterDays || 7;
+                view.querySelector('#useragent').value = config.Configuration?.UserAgent || '';
             });
         });
     });
@@ -50,6 +51,7 @@ export default function (view, params) {
                 view.querySelector('#sendfavorite').checked = configUserFilter[0].SendFavorite;
                 view.querySelector('#enabledatefilter').checked = configUserFilter[0].EnableDateFilter || false;
                 view.querySelector('#datefilterdays').value = configUserFilter[0].DateFilterDays || 7;
+                view.querySelector('#useragent').value = config.Configuration?.UserAgent || '';
             }
             else {
                 view.querySelector('#username').value = '';
@@ -58,6 +60,7 @@ export default function (view, params) {
                 view.querySelector('#sendfavorite').checked = false;
                 view.querySelector('#enabledatefilter').checked = false;
                 view.querySelector('#datefilterdays').value = 7;
+                view.querySelector('#useragent').value = config.Configuration?.UserAgent || '';
             }
     
         });
@@ -88,6 +91,12 @@ export default function (view, params) {
             configUser.EnableDateFilter = view.querySelector('#enabledatefilter').checked;
             configUser.DateFilterDays = parseInt(view.querySelector('#datefilterdays').value) || 7;
 
+            // Update configuration object with new User-Agent value
+            if (!config.Configuration) {
+                config.Configuration = {};
+            }
+            config.Configuration.UserAgent = view.querySelector('#useragent').value;
+
             const data = JSON.stringify(configUser);
             const url = ApiClient.getUrl('Jellyfin.Plugin.LetterboxdSync/Authenticate');
 
@@ -97,6 +106,12 @@ export default function (view, params) {
                 
                 AccountsUpdate.push(configUser);
                 config.Accounts = AccountsUpdate;
+                
+                // Update configuration with new User-Agent value
+                if (!config.Configuration) {
+                    config.Configuration = {};
+                }
+                config.Configuration.UserAgent = view.querySelector('#useragent').value;
         
                 ApiClient.updatePluginConfiguration(pluginId, config).then(function (result) {
                     Dashboard.processPluginConfigurationUpdateResult(result);
@@ -109,6 +124,12 @@ export default function (view, params) {
                     
                     AccountsUpdate.push(configUser);
                     config.Accounts = AccountsUpdate;
+                    
+                    // Update configuration with new User-Agent value
+                    if (!config.Configuration) {
+                        config.Configuration = {};
+                    }
+                    config.Configuration.UserAgent = view.querySelector('#useragent').value;
             
                     ApiClient.updatePluginConfiguration(pluginId, config).then(function (result) {
                         Dashboard.processPluginConfigurationUpdateResult(result);

@@ -21,13 +21,23 @@ public class LetterboxdApi
 
     private string username = string.Empty;
     
-    private readonly string userAgent;
+    private string GetUserAgent()
+    {
+        try
+        {
+            return Plugin.Instance?.Configuration.UserAgent ?? 
+                   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+        }
+        catch
+        {
+            // Если не удается получить доступ к конфигурации, используем значение по умолчанию
+            return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+        }
+    }
     
     public LetterboxdApi()
     {
-        // Получаем User-Agent из конфигурации плагина, если доступна, иначе используем значение по умолчанию
-        userAgent = Plugin.Instance?.Configuration.UserAgent ?? 
-                   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+        // Конструктор оставлен пустым, так как User-Agent будет запрашиваться динамически
     }
 
     public string Csrf => csrf;
@@ -41,7 +51,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient(new HttpClientHandler { CookieContainer = cookieContainer }))
         {
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
             var response = await client.PostAsync(url, new FormUrlEncodedContent(new Dictionary<string, string> { })).ConfigureAwait(false);
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new Exception($"Letterbox return {(int)response.StatusCode}");
@@ -53,7 +63,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient(new HttpClientHandler { CookieContainer = cookieContainer }))
         {
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
             client.DefaultRequestHeaders.Add("DNT", "1");
             client.DefaultRequestHeaders.Add("Host", "letterboxd.com");
             client.DefaultRequestHeaders.Add("Origin", "https://letterboxd.com");
@@ -102,7 +112,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient(handler))
         {
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
             var res = await client.GetAsync(tmdbUrl).ConfigureAwait(false);
 
             string letterboxdUrl = res?.RequestMessage?.RequestUri?.ToString() ?? string.Empty;
@@ -145,7 +155,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient())
         {
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
             client.DefaultRequestHeaders.Add("Cookie", this.cookie);
 
             var content = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -180,7 +190,7 @@ public class LetterboxdApi
 
         using (var client = new HttpClient())
         {
-            client.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            client.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
             client.DefaultRequestHeaders.Add("Cookie", this.cookie);
 
             var response = await client.GetStringAsync(url).ConfigureAwait(false);
